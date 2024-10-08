@@ -1,0 +1,116 @@
+.page {
+  padding: 16px 16px 96px 16px;
+}
+
+.section-container {
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.zaui-list-item {
+  cursor: pointer;
+}
+.full-page {
+  height: 100vh;
+  overflow: hidden;
+  .message {
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .top-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    padding: 5px;
+    button {
+      background-color: #fff;
+      box-shadow: 1px 2px 3px #0003;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .right {
+      input {
+        padding: 5px;
+        border-radius: 6px;
+        background-color: #fff;
+        padding: 8px 12px;
+        box-shadow: 1px 2px 3px #0003;
+      }
+    }
+  }
+  .action-tools {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    button {
+      box-shadow: 1px 2px 3px #0003;
+      padding: 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      background-color: #fff;
+    }
+  }
+  .history {
+    box-shadow: 0px 2px 3px #0003;
+    border-radius: 20px 20px 0px 0px;
+    background-color: #fff;
+    height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: calc(100% - 150px);
+    .bar-top {
+      justify-content: center;
+      display: flex;
+      padding: 10px;
+      .bar {
+        height: 10px;
+        width: 50px;
+        border-radius: 10px;
+        background-color: #e8edf3;
+      }
+    }
+    .title {
+      display: flex;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 13px;
+      gap: 5px;
+      .count {
+        padding: 2px 8px;
+        border-radius: 5px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.493);
+      }
+    }
+    .list_data {
+      display: flex;
+      overflow: auto;
+      margin-top: 10px;
+      table {
+        width: 100%;
+        tr {
+          td {
+            font-size: 13px;
+            padding: 8px 0px;
+            border-top: 1px solid #0003;
+            border-bottom: 1px solid #0003;
+            &:first-child {
+              font-weight: bold;
+              padding: 0px 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
