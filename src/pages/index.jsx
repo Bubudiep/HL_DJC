@@ -71,15 +71,25 @@ const HomePage = () => {
             <List>
               <List.Item
                 onClick={() => navigate("/dilam", { state: { user } })}
-                suffix={<Icon icon="zi-arrow-right" />}
               >
                 <div>Chấm công đi làm</div>
+                <div className="icons">
+                  <i className="fa-solid fa-arrow-right"></i>
+                </div>
+              </List.Item>
+              <List.Item onClick={() => navigate("/dive", { state: { user } })}>
+                <div>Chấm công đi về</div>
+                <div className="icons">
+                  <i className="fa-solid fa-arrow-right"></i>
+                </div>
               </List.Item>
               <List.Item
-                onClick={() => navigate("/dive", { state: { user } })}
-                suffix={<Icon icon="zi-arrow-right" />}
+                onClick={() => navigate("/baocao", { state: { user } })}
               >
-                <div>Chấm công đi về</div>
+                <div>Báo cáo đi làm</div>
+                <div className="icons">
+                  <i className="fa-solid fa-arrow-right"></i>
+                </div>
               </List.Item>
             </List>
           ) : (

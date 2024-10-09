@@ -15,7 +15,41 @@ const Dilam = () => {
 
   // Lấy thông tin người dùng khi component được mount
   useEffect(() => {
-    console.log(user);
+    const url = `http://localhost:5005/api/danhsachdilam/?ngaydilam=${date}&chamcongdi=true&page_size=999`;
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.app?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Lọc trùng và chọn object có giochamcong lớn nhất
+        const uniqueUsers = Object.values(
+          data.results.reduce((acc, curr) => {
+            const manhanvien = curr.manhanvien.manhanvien;
+
+            // Nếu manhanvien chưa có trong acc hoặc giochamcong của curr lớn hơn
+            if (
+              !acc[manhanvien] ||
+              new Date(curr.giochamcong) < new Date(acc[manhanvien].giochamcong)
+            ) {
+              acc[manhanvien] = curr; // Thay thế bằng object có giochamcong lớn hơn
+            }
+
+            return acc;
+          }, {})
+        );
+        console.log(uniqueUsers);
+        setUsersList((prevList) => [
+          ...prevList,
+          ...uniqueUsers.reverse(), // Thêm các phần tử mới từ API
+        ]);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi gọi API:", error);
+      });
   }, []); // Chạy 1 lần khi component mount
 
   const handleScan = () => {
@@ -98,7 +132,6 @@ const Dilam = () => {
 
           // Thêm người dùng mới vào danh sách
           setUsersList((prevList) => [...prevList, data]);
-          console.log(usersList);
         }
       })
       .catch((error) => {
@@ -127,33 +160,35 @@ const Dilam = () => {
         </div>
       </div>
       <div className="action-tools">
-        <button onClick={handleScan}>{buttonText}</button>
-      </div>
-      <div className="message">
-        {message && <p>{message}</p>} {/* Hiển thị thông báo nếu có */}
+        <button onClick={handleScan}>
+          <i className="fa-solid fa-qrcode"></i>
+          {buttonText}
+        </button>
+        <div className="message">
+          {message && <p>{message}</p>} {/* Hiển thị thông báo nếu có */}
+        </div>
       </div>
       <div className="history">
         <div className="bar-top">
           <div className="bar"></div>
         </div>
         <div className="title">
-          Danh sách đi làm <div className="count">{usersList.length}</div>
+          Danh sách chấm công vào{" "}
+          <div className="count">{usersList.length}</div>
         </div>
         <div className="list_data">
           <table>
             <tbody>
-              {/* Danh sách đi làm */}
-              {usersList.reverse().map((user, index) => (
+              {usersList.map((user, index) => (
                 <tr key={index}>
                   <td className="id">{usersList.length - index}</td>
                   <td className="date">{user?.manhanvien?.manhanvien}</td>
                   <td className="user">{user?.manhanvien?.HovaTen}</td>
                   <td className="time">
-                    {moment(user?.created_at).format("YYYY-MM-DD HH:mm")}
+                    {moment(user?.giochamcong).format("YYYY-MM-DD HH:mm")}
                   </td>
                 </tr>
               ))}
-              {/* Các hàng khác */}
             </tbody>
           </table>
         </div>
