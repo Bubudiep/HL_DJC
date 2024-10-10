@@ -15,7 +15,7 @@ const Dive = () => {
 
   // Lấy thông tin người dùng khi component được mount
   useEffect(() => {
-    const url = `http://localhost:5005/api/danhsachdilam/?ngaydilam=${date}&chamcongdi=false&page_size=999`;
+    const url = `https://ipays.vn/api/danhsachdilam/?ngaydilam=${date}&chamcongdi=false&page_size=999`;
     fetch(url, {
       method: "GET",
       headers: {
@@ -41,20 +41,14 @@ const Dive = () => {
             return acc;
           }, {})
         );
-        setUsersList((prevList) => [
-          ...prevList,
-          ...uniqueUsers.reverse(), // Thêm các phần tử mới từ API
-        ]);
+        setUsersList(uniqueUsers.reverse());
       })
       .catch((error) => {
         console.error("Lỗi khi gọi API:", error);
       });
-  }, []); // Chạy 1 lần khi component mount
+  }, [date]); // Chạy 1 lần khi component mount
 
   const handleScan = () => {
-    sendGetAPI("V000930"); // Gửi lệnh GET API với mã nhân viên
-    return;
-
     api.requestCameraPermission({
       success: ({ userAllow }) => {
         if (userAllow) {
@@ -99,7 +93,7 @@ const Dive = () => {
   };
 
   const sendGetAPI = (manhanvien) => {
-    const url = `http://localhost:5005/api/dilam/?congty=HoanglongDJC&manhanvien=${manhanvien}&ngaylam=${date}&from=zalo`;
+    const url = `https://ipays.vn/api/dilam/?congty=HoanglongDJC&manhanvien=${manhanvien}&ngaylam=${date}&from=zalo`;
 
     fetch(url, {
       method: "GET",

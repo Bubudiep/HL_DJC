@@ -1,0 +1,2 @@
+// Cấp quyền truy cập avatar, Tên
+// Sửa ngày chấm công vào và ra

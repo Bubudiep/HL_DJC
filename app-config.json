@@ -1,9 +1,9 @@
 {
   "app": {
     "title": "HL-JDC",
-    "headerTitle": "zmp-blank-templates",
-    "headerColor": "#1843EF",
-    "textColor": "white",
+    "headerTitle": "Hoàng Long DJC",
+    "headerColor": "#fff",
+    "textColor": "black",
     "textAlign": "left",
     "statusBarColor": "#1843EF",
     "leftButton": "back",

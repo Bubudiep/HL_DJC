@@ -7,12 +7,19 @@ const HomePage = () => {
   const [user, setUser] = useState(null); // Đếm số lần thử lại
   const navigate = useNavigate();
   // Lấy thông tin người dùng khi component được mount
+  // Hàm callback để cập nhật thông tin người dùng
+  const handleUserUpdate = (updatedUserInfo) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      zalo: updatedUserInfo?.userInfo, // Cập nhật thông tin Zalo
+    }));
+  };
   useEffect(() => {
     api.getUserInfo({
       success: (data) => {
         const zalo_id = data.userInfo.id;
         console.log("Thông tin người dùng:", data);
-        const url = `http://localhost:5005/api/zlogin/`;
+        const url = `https://ipays.vn/api/zlogin/`;
         fetch(url, {
           method: "POST",
           headers: {
@@ -27,7 +34,7 @@ const HomePage = () => {
             return response.json();
           })
           .then((app_data) => {
-            const url = `http://localhost:5005/api/danhsachadmin/`;
+            const url = `https://ipays.vn/api/danhsachadmin/`;
 
             fetch(url, {
               method: "GET",
@@ -64,10 +71,10 @@ const HomePage = () => {
     <Page className="page">
       <Suspense>
         <div className="section-container">
-          <UserCard />
+          <UserCard onUserUpdate={handleUserUpdate} />
         </div>
         <div className="section-container">
-          {user?.app?.access_token ? (
+          {user?.app?.access_token && user?.zalo?.name ? (
             <List>
               <List.Item
                 onClick={() => navigate("/dilam", { state: { user } })}
@@ -93,7 +100,9 @@ const HomePage = () => {
               </List.Item>
             </List>
           ) : (
-            <>Bạn không có quyền</>
+            <>
+              Bạn không có quyền, vui lòng chụp ảnh màn hình và gửi cho quản lý!
+            </>
           )}
         </div>
       </Suspense>
