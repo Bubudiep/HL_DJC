@@ -57,12 +57,10 @@ const Dive = () => {
               const { content } = data;
               if (content) {
                 const parts = content.split("|");
-
                 // Kiểm tra nếu định dạng đúng là "HoanglongDJC|manhanvien|nguoituyen"
                 if (parts.length === 3 && parts[0] === "HoanglongDJC") {
                   const manhanvien = parts[1]; // Lấy mã nhân viên
                   sendGetAPI(manhanvien); // Gửi lệnh GET API với mã nhân viên
-
                   setButtonText("Quét mã QR");
                   setRetryCount(0); // Reset lại đếm số lần thử
                 } else {
@@ -109,7 +107,6 @@ const Dive = () => {
           const existingUserIndex = usersList.findIndex(
             (u) => u.manhanvien.manhanvien === data.manhanvien.manhanvien
           );
-
           if (existingUserIndex !== -1) {
             setMessage(
               "Đã quét mã " + data?.manhanvien?.manhanvien + " trước đó."
@@ -122,8 +119,8 @@ const Dive = () => {
           } else {
             setMessage(""); // Reset thông báo nếu mã mới
           }
-
           // Thêm người dùng mới vào danh sách
+          setMessage(data.manhanvien.manhanvien + " chấm công thành công"); // Reset thông báo nếu mã mới
           setUsersList((prevList) => [...prevList, data]);
         }
       })
@@ -157,10 +154,6 @@ const Dive = () => {
           <i className="fa-solid fa-qrcode"></i>
           {buttonText}
         </button>
-        <div className="hint">
-          Hiện tại chỉ chấm công về cho các bạn làm{" "}
-          {hour < 11 ? "Ca đêm" : "Ca ngày"}
-        </div>
         <div className="message">
           {message && <p>{message}</p>} {/* Hiển thị thông báo nếu có */}
         </div>

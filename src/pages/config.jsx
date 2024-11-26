@@ -203,7 +203,12 @@ const Nhanvien_caidat = () => {
             type="text"
             placeholder="Mã nv, họ tên..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
+            onKeyUp={(e) => {
+              handleSearch(); // Trigger search when Enter key is pressed
+            }}
           />
           <button onClick={handleSearch}>Tìm kiếm</button>
         </div>

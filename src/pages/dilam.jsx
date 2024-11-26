@@ -125,6 +125,7 @@ const Dilam = () => {
           }
 
           // Thêm người dùng mới vào danh sách
+          setMessage(data.manhanvien.manhanvien + " chấm công thành công"); // Reset thông báo nếu mã mới
           setUsersList((prevList) => [...prevList, data]);
         }
       })
@@ -160,10 +161,6 @@ const Dilam = () => {
         </button>
         <div className="message">
           {message && <p>{message}</p>} {/* Hiển thị thông báo nếu có */}
-        </div>
-        <div className="hint">
-          Hiện tại chỉ chấm công vào cho các bạn làm{" "}
-          {hour > 14 ? "Ca đêm" : "Ca ngày"}
         </div>
       </div>
       <div className="history">
