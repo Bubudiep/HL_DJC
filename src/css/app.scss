@@ -88,12 +88,19 @@
       .tools {
         border-top: 1px solid #0003;
         padding: 8px;
-      }
-      button.btn-save {
-        background-color: rgb(0, 162, 255);
-        padding: 8px 16px;
-        border-radius: 8px;
-        color: #fff;
+        display: flex;
+        button.btn-save {
+          background-color: rgb(0, 162, 255);
+          padding: 8px 16px;
+          border-radius: 8px;
+          color: #fff;
+        }
+        button.btn-close {
+          background-color: rgb(255, 81, 0);
+          padding: 8px 16px;
+          border-radius: 8px;
+          color: #fff;
+        }
       }
     }
     .detectOut {
@@ -356,4 +363,9 @@
     margin-bottom: 0px;
     height: 30px;
   }
+}
+.hint {
+  font-size: 13px;
+  font-weight: 500;
+  padding-top: 8px;
 }

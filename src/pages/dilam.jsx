@@ -12,7 +12,7 @@ const Dilam = () => {
   const [retryCount, setRetryCount] = useState(0); // Đếm số lần thử lại
   const [usersList, setUsersList] = useState([]); // Danh sách người dùng đi làm
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // Ngày mặc định là hôm nay
-
+  const hour = new Date().getHours();
   // Lấy thông tin người dùng khi component được mount
   useEffect(() => {
     const url = `https://ipays.vn/api/danhsachdilam/?ngaydilam=${date}&chamcongdi=true&page_size=999`;
@@ -161,6 +161,10 @@ const Dilam = () => {
         <div className="message">
           {message && <p>{message}</p>} {/* Hiển thị thông báo nếu có */}
         </div>
+        <div className="hint">
+          Hiện tại chỉ chấm công vào cho các bạn làm{" "}
+          {hour > 14 ? "Ca đêm" : "Ca ngày"}
+        </div>
       </div>
       <div className="history">
         <div className="bar-top">
@@ -178,6 +182,11 @@ const Dilam = () => {
                   <td className="id">{usersList.length - index}</td>
                   <td className="date">{user?.manhanvien?.manhanvien}</td>
                   <td className="user">{user?.manhanvien?.HovaTen}</td>
+                  <td className="date">
+                    {user?.manhanvien?.calamviec == "cangay"
+                      ? "Ca ngày"
+                      : "Ca đêm"}
+                  </td>
                   <td className="time">
                     {moment(user?.giochamcong).format("YYYY-MM-DD HH:mm")}
                   </td>

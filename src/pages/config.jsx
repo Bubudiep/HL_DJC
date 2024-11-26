@@ -37,7 +37,7 @@ const Nhanvien_caidat = () => {
         console.error("Error when calling API:", error);
       });
   }, [user]);
-  const handleSave = () => {
+  const handleSave = (nghiviec = false) => {
     console.log(chuyenca, csCa, csCadate);
     fetch("https://ipays.vn/api/cty/chuyenca/", {
       method: "POST",
@@ -45,12 +45,17 @@ const Nhanvien_caidat = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user?.app?.access_token}`,
       },
-      body: JSON.stringify({
-        id: chuyenca.id, // Could be search filters or other data
-        calamviec: csCa, // Example: filter by date (you can send more fields as needed)
-        ngayapdung: csCadate,
-        ghichu: notes,
-      }),
+      body: nghiviec
+        ? JSON.stringify({
+            id: chuyenca.id,
+            nghiviec: true,
+          })
+        : JSON.stringify({
+            id: chuyenca.id, // Could be search filters or other data
+            calamviec: csCa, // Example: filter by date (you can send more fields as needed)
+            ngayapdung: csCadate,
+            ghichu: notes,
+          }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -85,10 +90,16 @@ const Nhanvien_caidat = () => {
     }
   };
   // Filter the users list based on the selected shift
-  const filteredUsersList = usersList.filter((user) => {
-    if (shiftFilter === "Tất cả") return true; // Show all users if no filter
-    return user?.calamviec === shiftFilter;
-  });
+  const filteredUsersList = usersList
+    .filter((user) => {
+      if (shiftFilter === "Tất cả") return true; // Show all users if no filter
+      return user?.calamviec === shiftFilter;
+    })
+    .sort((a, b) => {
+      if (a?.nghiviec === false && b?.nghiviec === true) return -1;
+      if (a?.nghiviec === true && b?.nghiviec === false) return 1;
+      return 0;
+    });
   return (
     <div className="full-page">
       {chuyenca && (
@@ -156,6 +167,16 @@ const Nhanvien_caidat = () => {
               <button className="btn-save" onClick={handleSave}>
                 Lưu lại
               </button>
+              <div className="ml-auto">
+                <button
+                  onClick={() => {
+                    handleSave(true);
+                  }}
+                  className="btn-close"
+                >
+                  Nghỉ việc
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -194,7 +215,12 @@ const Nhanvien_caidat = () => {
         </div>
         <div className="title">
           Danh sách nhân viên{" "}
-          <div className="count">{filteredUsersList.length}</div>
+          <div className="count">
+            {filteredUsersList.length > 0 &&
+              filteredUsersList.filter((item) => item.nghiviec === false)
+                .length}
+            /{filteredUsersList.length}
+          </div>
         </div>
         <div className="list_data">
           <table>
@@ -210,24 +236,28 @@ const Nhanvien_caidat = () => {
                   <td className="user">{user?.HovaTen}</td>
                   <td className="user">
                     {user?.calamviec == "cangay"
-                      ? "Ca ngày"
+                      ? "Ngày"
                       : user?.calamviec == "cadem"
-                      ? "Ca đêm"
+                      ? "Đêm"
                       : "Chưa cài"}
                   </td>
                   <td>
-                    <button
-                      onClick={() => {
-                        setchuyenca(user);
-                        if (user?.calamviec == "cangay") {
-                          setCsCa("cadem");
-                        } else {
-                          setCsCa("cangay");
-                        }
-                      }}
-                    >
-                      Chuyển ca
-                    </button>
+                    {!user.nghiviec ? (
+                      <button
+                        onClick={() => {
+                          setchuyenca(user);
+                          if (user?.calamviec == "cangay") {
+                            setCsCa("cadem");
+                          } else {
+                            setCsCa("cangay");
+                          }
+                        }}
+                      >
+                        Chuyển ca
+                      </button>
+                    ) : (
+                      "Nghỉ việc"
+                    )}
                   </td>
                 </tr>
               ))}
