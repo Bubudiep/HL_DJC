@@ -35,7 +35,6 @@ const HomePage = () => {
           })
           .then((app_data) => {
             const url = `https://ipays.vn/api/danhsachadmin/`;
-
             fetch(url, {
               method: "GET",
               headers: {
@@ -94,6 +93,14 @@ const HomePage = () => {
                 onClick={() => navigate("/baocao", { state: { user } })}
               >
                 <div>Báo cáo đi làm</div>
+                <div className="icons">
+                  <i className="fa-solid fa-arrow-right"></i>
+                </div>
+              </List.Item>
+              <List.Item
+                onClick={() => navigate("/config", { state: { user } })}
+              >
+                <div>Chia ca</div>
                 <div className="icons">
                   <i className="fa-solid fa-arrow-right"></i>
                 </div>

@@ -9,6 +9,7 @@ import User from "../pages/user";
 import Dilam from "../pages/dilam";
 import Dive from "../pages/dive";
 import Baocao from "../pages/baocao";
+import Nhanvien_caidat from "../pages/config";
 
 const MyApp = () => {
   return (
@@ -24,6 +25,7 @@ const MyApp = () => {
               <Route path="/about" element={<About></About>}></Route>
               <Route path="/form" element={<Form></Form>}></Route>
               <Route path="/user" element={<User></User>}></Route>
+              <Route path="/config" element={<Nhanvien_caidat />}></Route>
             </AnimationRoutes>
           </ZMPRouter>
         </SnackbarProvider>
