@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "zmp-ui";
 
 const Nhanvien_caidat = () => {
   const navigate = useNavigate();
@@ -45,17 +46,18 @@ const Nhanvien_caidat = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user?.app?.access_token}`,
       },
-      body: nghiviec
-        ? JSON.stringify({
-            id: chuyenca.id,
-            nghiviec: true,
-          })
-        : JSON.stringify({
-            id: chuyenca.id, // Could be search filters or other data
-            calamviec: csCa, // Example: filter by date (you can send more fields as needed)
-            ngayapdung: csCadate,
-            ghichu: notes,
-          }),
+      body:
+        nghiviec == true
+          ? JSON.stringify({
+              id: chuyenca.id,
+              nghiviec: true,
+            })
+          : JSON.stringify({
+              id: chuyenca.id, // Could be search filters or other data
+              calamviec: csCa, // Example: filter by date (you can send more fields as needed)
+              ngayapdung: csCadate,
+              ghichu: notes,
+            }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -183,7 +185,13 @@ const Nhanvien_caidat = () => {
       )}
       <div className="top-container">
         <div className="left">
-          <button onClick={() => navigate(-1)}>Quay lại</button>
+          <button
+            onClick={() =>
+              navigate("/", { state: { user }, direction: "backward" })
+            }
+          >
+            Quay lại
+          </button>
         </div>
         <div className="right">
           <select
@@ -240,11 +248,17 @@ const Nhanvien_caidat = () => {
                   <td className="date">{user?.manhanvien}</td>
                   <td className="user">{user?.HovaTen}</td>
                   <td className="user">
-                    {user?.calamviec == "cangay"
-                      ? "Ngày"
-                      : user?.calamviec == "cadem"
-                      ? "Đêm"
-                      : "Chưa cài"}
+                    {user?.calamviec == "cangay" ? (
+                      <div className="day">
+                        <i className="fa-solid fa-sun"></i> Ngày
+                      </div>
+                    ) : user?.calamviec == "cadem" ? (
+                      <div className="night">
+                        <i className="fa-solid fa-moon"></i> Đêm
+                      </div>
+                    ) : (
+                      "Chưa cài"
+                    )}
                   </td>
                   <td>
                     {!user.nghiviec ? (

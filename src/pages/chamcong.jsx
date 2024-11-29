@@ -1,52 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import api from "zmp-sdk";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "zmp-ui";
 
-const Dive = () => {
+const Chamcong = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState(""); // Trạng thái để lưu thông báo
   const location = useLocation(); // Lấy state từ navigate
   const [user, setUser] = useState(location.state?.user); // Thông tin người dùng
   const [buttonText, setButtonText] = useState("Quét mã QR");
-  const [retryCount, setRetryCount] = useState(0); // Đếm số lần thử lại
   const [usersList, setUsersList] = useState([]); // Danh sách người dùng đi làm
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // Ngày mặc định là hôm nay
-  const hour = new Date().getHours();
-  // Lấy thông tin người dùng khi component được mount
-  useEffect(() => {
-    const url = `https://ipays.vn/api/danhsachdilam/?ngaydilam=${date}&chamcongdi=false&page_size=999`;
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user?.app?.access_token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Lọc trùng và chọn object có giochamcong lớn nhất
-        const uniqueUsers = Object.values(
-          data.results.reduce((acc, curr) => {
-            const manhanvien = curr.manhanvien.manhanvien;
-
-            // Nếu manhanvien chưa có trong acc hoặc giochamcong của curr lớn hơn
-            if (
-              !acc[manhanvien] ||
-              new Date(curr.giochamcong) > new Date(acc[manhanvien].giochamcong)
-            ) {
-              acc[manhanvien] = curr; // Thay thế bằng object có giochamcong lớn hơn
-            }
-
-            return acc;
-          }, {})
-        );
-        setUsersList(uniqueUsers.reverse());
-      })
-      .catch((error) => {
-        console.error("Lỗi khi gọi API:", error);
-      });
-  }, [date]); // Chạy 1 lần khi component mount
+  const [date2, setDate2] = useState(
+    new Date(new Date().setDate(new Date().getDate() - 1))
+      .toISOString()
+      .split("T")[0]
+  ); // Ngày mặc định là hôm nay
 
   const handleScan = () => {
     api.requestCameraPermission({
@@ -57,25 +26,22 @@ const Dive = () => {
               const { content } = data;
               if (content) {
                 const parts = content.split("|");
-                // Kiểm tra nếu định dạng đúng là "HoanglongDJC|manhanvien|nguoituyen"
                 if (parts.length === 3 && parts[0] === "HoanglongDJC") {
                   const manhanvien = parts[1]; // Lấy mã nhân viên
                   sendGetAPI(manhanvien); // Gửi lệnh GET API với mã nhân viên
                   setButtonText("Quét mã QR");
-                  setRetryCount(0); // Reset lại đếm số lần thử
+                  setRetryCount(0);
                 } else {
                   console.log("Mã không hợp lệ:", content);
                   setButtonText(`Thử lại (${retryCount + 1})`);
                   setRetryCount((prev) => prev + 1); // Tăng đếm số lần thử lại
                 }
               } else {
-                // Nếu không có content thì đổi nút thành "Thử lại"
                 setButtonText(`Thử lại (${retryCount + 1})`);
                 setRetryCount((prev) => prev + 1); // Tăng đếm số lần thử lại
               }
             },
             fail: () => {
-              // Nếu quét thất bại cũng đổi nút thành "Thử lại"
               setButtonText(`Thử lại (${retryCount + 1})`);
               setRetryCount((prev) => prev + 1); // Tăng đếm số lần thử lại
             },
@@ -83,16 +49,27 @@ const Dive = () => {
         }
       },
       fail: () => {
-        // Nếu yêu cầu quyền thất bại thì đổi nút thành "Thử lại"
         setButtonText(`Thử lại (${retryCount + 1})`);
         setRetryCount((prev) => prev + 1); // Tăng đếm số lần thử lại
       },
     });
   };
+  const processRecords = (records) =>
+    records.map((record) => {
+      const calamviec = record?.manhanvien?.calamviec;
+      const giochamcong = new Date(record.giochamcong);
 
+      if (calamviec === "cangay") {
+        const hour = giochamcong.getHours(); // Lấy giờ từ timestamp
+        record.gio = hour < 13 ? "Giờ vào" : "Giờ ra";
+      } else {
+        record.gio = "Không xác định";
+      }
+
+      return record;
+    });
   const sendGetAPI = (manhanvien) => {
-    const url = `https://ipays.vn/api/dilam/?congty=HoanglongDJC&manhanvien=${manhanvien}&ngaylam=${date}&from=zalo`;
-
+    const url = `https://ipays.vn/api/dilam/?chamcongdi=true&congty=HoanglongDJC&manhanvien=${manhanvien}&ngaylam=${date}&from=zalo`;
     fetch(url, {
       method: "GET",
       headers: {
@@ -107,6 +84,7 @@ const Dive = () => {
           const existingUserIndex = usersList.findIndex(
             (u) => u.manhanvien.manhanvien === data.manhanvien.manhanvien
           );
+
           if (existingUserIndex !== -1) {
             setMessage(
               "Đã quét mã " + data?.manhanvien?.manhanvien + " trước đó."
@@ -128,7 +106,37 @@ const Dive = () => {
         console.error("Lỗi khi gọi API:", error);
       });
   };
-
+  useEffect(() => {
+    const url = `https://ipays.vn/api/danhsachdilam/?ngaydilam=${date2},${date}&page_size=999`;
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.app?.access_token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(processRecords(data.results));
+        const uniqueUsers = Object.values(
+          data.results.reduce((acc, curr) => {
+            const manhanvien = curr.manhanvien.manhanvien;
+            if (
+              !acc[manhanvien] ||
+              new Date(curr.giochamcong) < new Date(acc[manhanvien].giochamcong)
+            ) {
+              acc[manhanvien] = curr;
+            }
+            return acc;
+          }, {})
+        );
+        console.log(uniqueUsers);
+        setUsersList(uniqueUsers.reverse());
+      })
+      .catch((error) => {
+        console.error("Lỗi khi gọi API:", error);
+      });
+  }, [date]);
   return (
     <div className="full-page">
       <div className="top-container">
@@ -163,7 +171,8 @@ const Dive = () => {
           <div className="bar"></div>
         </div>
         <div className="title">
-          Danh sách chấm công về <div className="count">{usersList.length}</div>
+          Danh sách chấm công
+          <div className="count">{usersList.length}</div>
         </div>
         <div className="list_data">
           <table>
@@ -191,4 +200,4 @@ const Dive = () => {
   );
 };
 
-export default Dive;
+export default Chamcong;

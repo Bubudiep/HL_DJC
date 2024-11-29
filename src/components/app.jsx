@@ -10,6 +10,7 @@ import Dilam from "../pages/dilam";
 import Dive from "../pages/dive";
 import Baocao from "../pages/baocao";
 import Nhanvien_caidat from "../pages/config";
+import Chamcong from "../pages/chamcong";
 
 const MyApp = () => {
   return (
@@ -20,6 +21,7 @@ const MyApp = () => {
             <AnimationRoutes>
               <Route path="/" element={<HomePage></HomePage>}></Route>
               <Route path="/dilam" element={<Dilam />}></Route>
+              <Route path="/chamcong" element={<Chamcong />}></Route>
               <Route path="/dive" element={<Dive />}></Route>
               <Route path="/baocao" element={<Baocao />}></Route>
               <Route path="/about" element={<About></About>}></Route>

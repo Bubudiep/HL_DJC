@@ -139,9 +139,9 @@ const Dilam = () => {
       <div className="top-container">
         <div className="left">
           <button
-            onClick={() => {
-              navigate(-1);
-            }}
+            onClick={() =>
+              navigate("/", { state: { user }, direction: "backward" })
+            }
           >
             Quay lại
           </button>
